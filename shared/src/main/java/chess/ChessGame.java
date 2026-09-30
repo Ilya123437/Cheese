@@ -52,6 +52,16 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        // get the piece at that position
+
+        // get its pieceMoves collection
+
+        // see if after making any of the moves the teams color is in check
+
+            // if it is, remove it
+
+            // else, add it
+
         throw new RuntimeException("Not implemented");
     }
 
@@ -72,13 +82,64 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        // find the king
+        // Part 1: Find the King
 
-        // get it's position
+        // Making space to save kingPos outside of if statement
+        ChessPosition kingPos = null;
 
-        // figure out if an enemy piece is attacking the square
+        // Search the board space for the king
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
 
-        throw new RuntimeException("Not implemented");
+                // Grabbing piece at the square
+                ChessPiece piece = this.board.getPiece(new ChessPosition(row, col));
+
+                // Checking that it's not empty before we call getPieceType
+                if (piece != null) {
+
+                    // Checking if it's the king we want
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+
+                        // Saving its position outside the loop
+                        kingPos = new ChessPosition(row, col);
+                    }
+                }
+
+            }
+        }
+
+        // Part 2: Figure out if he's under attack
+
+        // Checking all positions on the board
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+
+                // Getting the piece at the position
+                ChessPiece piece = this.board.getPiece(new ChessPosition(row, col));
+
+                // Checking that it's not empty
+                if (piece != null) {
+
+                    // Checking that it's and enemy piece
+                    if (piece.getTeamColor() != teamColor) {
+
+                        // Getting its moveset
+                        Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, new ChessPosition(row, col));
+
+                        // Checking all moves
+                        for (ChessMove move : possibleMoves) {
+
+                            // Checking if the end position is same as kings position
+                            if (move.getEndPosition().equals(kingPos)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        return false;
     }
 
     /**

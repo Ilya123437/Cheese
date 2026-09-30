@@ -9,9 +9,9 @@ tasks that I still need to work on
    ↓
 4. ~~get/set board~~
    ↓
-5. isInCheck (in progress)
+5. ~~isInCheck~~ 
    ↓
-6. validMoves
+6. validMoves (in progress)
    ↓
 7. makeMove
    ↓
