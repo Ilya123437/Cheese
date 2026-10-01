@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -52,14 +51,22 @@ public class ChessGame {
      * startPosition
      */
 
-    private ChessBoard simulateMove(ChessMove move, ChessBoard board) {
+    private boolean isValidMove(ChessMove move, ChessBoard board) {
+        // Make a copy of the board
+
+        // Simulating the move
         ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
         board.addPiece(move.getEndPosition(), pieceToMove);
         board.removePiece(move.getStartPosition());
-        return board;
+
+        // Checking for checks tee hee
+        return !isInCheck(this.currentPlayerTurn);
     }
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        // Creating a place to store valid moves
+        Collection<ChessMove> valMoves = new ArrayList<>();
+
         // get the piece at that position
         ChessPiece piece = this.board.getPiece(startPosition);
 
@@ -67,14 +74,13 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
 
         // see if after making any of the moves the teams color is in check
-        // need a function that simulates a move and gives me back a board state
-        // then I can run isInCheck on the side that made the move
+        for (ChessMove move : possibleMoves) {
+            if (isValidMove(move, this.board)) {
+                valMoves.add(move);
+            }
+        }
 
-            // if it is, remove it
-
-            // else, add it
-
-        throw new RuntimeException("Not implemented");
+        return valMoves;
     }
 
     /**
