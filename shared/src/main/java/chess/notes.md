@@ -11,9 +11,9 @@ tasks that I still need to work on
    ↓
 5. ~~isInCheck~~ 
    ↓
-6. validMoves (in progress)
+6. ~~validMoves~~ 
    ↓
-7. makeMove
+7. makeMove (in progress)
    ↓
 8. isInCheckmate
    ↓

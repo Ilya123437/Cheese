@@ -52,15 +52,27 @@ public class ChessGame {
      */
 
     private boolean isValidMove(ChessMove move, ChessBoard board) {
-        // Make a copy of the board
+        // Storing the boolean so we can return it after we undo the move
+        boolean isValid;
 
-        // Simulating the move
-        ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
-        board.addPiece(move.getEndPosition(), pieceToMove);
+        // Saving pieces
+        ChessPiece pieceAtStart = board.getPiece(move.getStartPosition());
+        ChessPiece pieceAtEnd = board.getPiece(move.getEndPosition());
+
+        // Make the move
+        board.removePiece(move.getEndPosition());
         board.removePiece(move.getStartPosition());
+        board.addPiece(move.getEndPosition(), pieceAtStart);
+
 
         // Checking for checks tee hee
-        return !isInCheck(this.currentPlayerTurn);
+        isValid = !isInCheck(pieceAtStart.getTeamColor());
+
+        // Undo the move
+        board.addPiece(move.getStartPosition(), pieceAtStart);
+        board.addPiece(move.getEndPosition(), pieceAtEnd);
+
+        return isValid;
     }
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
