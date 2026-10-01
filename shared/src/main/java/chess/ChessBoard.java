@@ -24,6 +24,9 @@ public class ChessBoard {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
+
+    public void removePiece(ChessPosition position) {this.board.put(position, null);}
+
     public void addPiece(ChessPosition position, ChessPiece piece) {
         this.board.put(position, piece);
     }

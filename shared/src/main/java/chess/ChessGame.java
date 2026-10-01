@@ -51,12 +51,24 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
+
+    private ChessBoard simulateMove(ChessMove move, ChessBoard board) {
+        ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
+        board.addPiece(move.getEndPosition(), pieceToMove);
+        board.removePiece(move.getStartPosition());
+        return board;
+    }
+
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         // get the piece at that position
+        ChessPiece piece = this.board.getPiece(startPosition);
 
         // get its pieceMoves collection
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(this.board, startPosition);
 
         // see if after making any of the moves the teams color is in check
+        // need a function that simulates a move and gives me back a board state
+        // then I can run isInCheck on the side that made the move
 
             // if it is, remove it
 
