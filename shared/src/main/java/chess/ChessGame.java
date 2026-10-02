@@ -59,18 +59,26 @@ public class ChessGame {
         ChessPiece pieceAtStart = board.getPiece(move.getStartPosition());
         ChessPiece pieceAtEnd = board.getPiece(move.getEndPosition());
 
+        // if (pieceAtStart.getTeamColor() == pieceAtEnd.getTeamColor()) {return false;}
+
         // Make the move
         board.removePiece(move.getEndPosition());
         board.removePiece(move.getStartPosition());
         board.addPiece(move.getEndPosition(), pieceAtStart);
-
 
         // Checking for checks tee hee
         isValid = !isInCheck(pieceAtStart.getTeamColor());
 
         // Undo the move
         board.addPiece(move.getStartPosition(), pieceAtStart);
-        board.addPiece(move.getEndPosition(), pieceAtEnd);
+
+        if (pieceAtEnd != null) {
+            board.addPiece(move.getEndPosition(), pieceAtEnd);
+        } else {
+            board.removePiece(move.getEndPosition());
+        }
+
+
 
         return isValid;
     }
@@ -102,7 +110,38 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        if (this.board.getPiece(move.getStartPosition()) == null || this.board.getPiece(move.getStartPosition()).getTeamColor() != this.currentPlayerTurn) {throw new InvalidMoveException();}
+
+        ChessPiece pieceStart = board.getPiece(move.getStartPosition());
+        ChessPiece pieceEnd = board.getPiece(move.getEndPosition());
+
+        if (pieceStart != null && pieceEnd != null && pieceEnd.getTeamColor() == pieceStart.getTeamColor()) {throw new InvalidMoveException();}
+
+        if (validMoves(move.getStartPosition()).contains(move)) {
+            // Saving pieces
+            ChessPiece pieceAtStart = board.getPiece(move.getStartPosition());
+
+            // Makin my move aha aha
+            board.removePiece(move.getEndPosition());
+            board.removePiece(move.getStartPosition());
+
+            // Pawn promotion handling
+            if (move.getPromotionPiece() != null) {
+                pieceAtStart = new ChessPiece(pieceAtStart.getTeamColor(), move.getPromotionPiece());
+            }
+            board.addPiece(move.getEndPosition(), pieceAtStart);
+
+        } else {
+            throw new InvalidMoveException();
+        }
+
+        // Switch currentPlayerTurn
+        if (this.currentPlayerTurn == TeamColor.WHITE) {
+            this.currentPlayerTurn = TeamColor.BLACK;
+        } else {
+            this.currentPlayerTurn = TeamColor.WHITE;
+        }
+
     }
 
     /**
