@@ -1,4 +1,4 @@
 package dataaccess.Auth;
 
-public class AuthDAO {
+public interface AuthDAO {
 }
