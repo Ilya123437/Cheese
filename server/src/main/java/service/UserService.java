@@ -8,9 +8,9 @@ import model.UserData;
 import org.jetbrains.annotations.NotNull;
 import service.Exceptions.AlreadyTakenException;
 import service.Exceptions.InvalidCredentialsException;
+import service.Exceptions.UnauthorizedException;
 import service.Records.LoginResult;
 import service.Records.RegisterResult;
-
 import java.util.Objects;
 import java.util.UUID;
 
@@ -44,11 +44,17 @@ public class UserService {
         } else if (!Objects.equals(userDAO.getUser(username).password(), password)) {
             throw new InvalidCredentialsException("Password is incorrect");
         }
-
         String token = UUID.randomUUID().toString();
         AuthData auth = new AuthData(token, username);
         authDAO.createAuth(auth);
 
         return new LoginResult(username, token);
+    }
+
+    public void logout(String authToken) throws UnauthorizedException, DataAccessException{
+        if (authDAO.getAuth(authToken) == null) {
+            throw new UnauthorizedException("The token does not exist");
+        }
+        authDAO.deleteAuth(authToken);
     }
 }
