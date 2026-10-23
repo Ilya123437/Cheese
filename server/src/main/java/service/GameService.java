@@ -26,7 +26,8 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public ListGamesResult listGames(String authToken) throws UnauthorizedException {
+    public ListGamesResult listGames(String authToken) throws UnauthorizedException, DataAccessException {
+        // 401 status handling
         if (authDAO.getAuth(authToken) == null) {
             throw new UnauthorizedException("The token does not exist");
         }

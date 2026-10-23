@@ -14,7 +14,6 @@ import service.Records.LoginResult;
 import service.Records.RegisterRequest;
 import service.Records.RegisterResult;
 import service.util.RequestValidator;
-
 import java.util.Objects;
 import java.util.UUID;
 
@@ -46,12 +45,18 @@ public class UserService {
         return new RegisterResult(request.username(), token);
     }
 
-    public LoginResult login(LoginRequest request) throws InvalidCredentialsException, DataAccessException {
+    public LoginResult login(LoginRequest request) throws BadRequestException, InvalidCredentialsException, DataAccessException {
+        // 400 status handling
+        RequestValidator.validateRequiredFields(request.username(), request.password());
+
+        // 401 status handling
         if (userDAO.getUser(request.username()) == null) {
             throw new InvalidCredentialsException("User does not exist");
         } else if (!Objects.equals(userDAO.getUser(request.username()).password(), request.password())) {
             throw new InvalidCredentialsException("Password is incorrect");
         }
+
+        // Generating session token
         String token = UUID.randomUUID().toString();
         AuthData auth = new AuthData(token, request.username());
         authDAO.createAuth(auth);
@@ -60,11 +65,10 @@ public class UserService {
     }
 
     public void logout(String authToken) throws UnauthorizedException, DataAccessException{
+        // 401 status handling
         if (authDAO.getAuth(authToken) == null) {
             throw new UnauthorizedException("The token does not exist");
         }
         authDAO.deleteAuth(authToken);
     }
-
-
 }

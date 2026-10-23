@@ -7,7 +7,6 @@ import service.Records.RegisterRequest;
 import io.javalin.http.Context;
 import service.Records.RegisterResult;
 import service.UserService;
-
 import java.util.Map;
 
 public class UserHandler {
@@ -41,4 +40,6 @@ public class UserHandler {
             ctx.json(Map.of("message", error.getMessage()));
         }
     }
+
+
 }
