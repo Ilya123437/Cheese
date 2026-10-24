@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record JoinGameRequest(
         String playerColor,
-        @NotNull Integer gameID,
-        String authToken
+        @NotNull Integer gameID
 ) {
 }

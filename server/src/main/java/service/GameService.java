@@ -34,8 +34,8 @@ public class GameService {
         return new ListGamesResult(gameDAO.listGames());
     }
 
-    public CreateGameResult createGame(CreateGameRequest request) throws UnauthorizedException, DataAccessException {
-        if (authDAO.getAuth(request.authToken()) == null) {
+    public CreateGameResult createGame(String authToken, CreateGameRequest request) throws UnauthorizedException, DataAccessException {
+        if (authDAO.getAuth(authToken) == null) {
             throw new UnauthorizedException("The token does not exist");
         }
 
@@ -52,23 +52,28 @@ public class GameService {
         return new CreateGameResult(gameID);
     }
 
-    public void joinGame(JoinGameRequest request) throws UnauthorizedException, AlreadyTakenException, DataAccessException, BadRequestException {
-        if (authDAO.getAuth(request.authToken()) == null) {
+    public void joinGame(String authToken, JoinGameRequest request) throws UnauthorizedException, AlreadyTakenException, DataAccessException, BadRequestException {
+        // 401 status handling
+        if (authDAO.getAuth(authToken) == null) {
             throw new UnauthorizedException("The token does not exist");
         }
+
+        // 400 status handling
         if (!Objects.equals(request.playerColor(), "WHITE") && !Objects.equals(request.playerColor(), "BLACK")) {
             throw new BadRequestException("playerColor must be WHITE or BLACK");
         }
 
         GameData gameData = gameDAO.getGame(request.gameID());
 
+        // 400 status handling
         if (gameData == null) {
-            throw new DataAccessException("Game not found");
+            throw new BadRequestException("Game not found");
         }
 
-        String username = authDAO.getAuth(request.authToken()).username();
+        String username = authDAO.getAuth(authToken).username();
 
         if (request.playerColor().equals("WHITE")) {
+            // 403 status handling
             if (gameData.whiteUsername() != null) {
                 throw new AlreadyTakenException("White player slot already taken");
             }
@@ -76,6 +81,7 @@ public class GameService {
             GameData updatedGame = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game());
             gameDAO.updateGame(request.gameID(), updatedGame);
         } else {
+            // 403 status handling
             if (gameData.blackUsername() != null) {
                 throw new AlreadyTakenException("Black player slot already taken");
             }

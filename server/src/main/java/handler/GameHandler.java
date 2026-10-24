@@ -1,13 +1,12 @@
 package handler;
 
 import dataaccess.DataAccessException;
+import service.Exceptions.AlreadyTakenException;
+import service.Exceptions.BadRequestException;
 import service.Exceptions.UnauthorizedException;
 import service.GameService;
 import io.javalin.http.Context;
-import service.Records.CreateGameRequest;
-import service.Records.CreateGameResult;
-import service.Records.RegisterRequest;
-import service.Records.RegisterResult;
+import service.Records.*;
 
 import java.util.Map;
 
@@ -38,8 +37,7 @@ public class GameHandler {
         try {
             CreateGameRequest request = ctx.bodyAsClass(CreateGameRequest.class);
 
-            CreateGameResult result = gameService.createGame(new CreateGameRequest(
-                    request.authToken(),
+            CreateGameResult result = gameService.createGame(authToken, new CreateGameRequest(
                     request.gameName()
             ));
 
@@ -48,6 +46,30 @@ public class GameHandler {
 
         } catch (UnauthorizedException error) {
             ctx.status(401);
+            ctx.json(Map.of("message", error.getMessage()));
+        } catch (DataAccessException error) {
+            ctx.status(500);
+            ctx.json(Map.of("message", error.getMessage()));
+        }
+    }
+
+    public void joinGame(Context ctx) {
+        String authToken = ctx.header("Authorization");
+
+        try {
+            JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
+            gameService.joinGame(authToken, request);
+
+            ctx.status(200);
+
+        } catch (BadRequestException error) {
+            ctx.status(400);
+            ctx.json(Map.of("message", error.getMessage()));
+        } catch (UnauthorizedException error) {
+            ctx.status(401);
+            ctx.json(Map.of("message", error.getMessage()));
+        } catch (AlreadyTakenException error) {
+            ctx.status(403);
             ctx.json(Map.of("message", error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);

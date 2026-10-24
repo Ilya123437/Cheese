@@ -6,10 +6,12 @@ import dataaccess.Game.GameDAO;
 import dataaccess.Game.MemoryGameDAO;
 import dataaccess.User.MemoryUserDAO;
 import dataaccess.User.UserDAO;
+import handler.ClearHandler;
 import handler.GameHandler;
 import handler.SessionHandler;
 import handler.UserHandler;
 import io.javalin.*;
+import service.ClearService;
 import service.GameService;
 import service.UserService;
 
@@ -27,16 +29,20 @@ public class Server {
 
         UserService userService = new UserService(userDAO, authDAO);
         GameService gameService = new GameService(authDAO, gameDAO);
+        ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
 
         UserHandler userHandler = new UserHandler(userService);
         SessionHandler sessionHandler = new SessionHandler(userService);
         GameHandler gameHandler = new GameHandler(gameService);
+        ClearHandler clearHandler = new ClearHandler(clearService);
 
         javalin.post("/user", userHandler::register);
         javalin.post("/session", sessionHandler::login);
         javalin.delete("/session", sessionHandler::logout);
         javalin.get("/game", gameHandler::listGames);
         javalin.post("/game", gameHandler::createGame);
+        javalin.put("/game", gameHandler::joinGame);
+        javalin.delete("/db", clearHandler::clear);
     }
 
     public int run(int desiredPort) {
