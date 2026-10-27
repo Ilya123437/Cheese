@@ -3,10 +3,8 @@ package handler;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.ClearService;
-
 import io.javalin.http.Context;
 
-import java.util.Map;
 
 public class ClearHandler {
     private final ClearService clearService;

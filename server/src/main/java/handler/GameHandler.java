@@ -28,10 +28,12 @@ public class GameHandler {
             ctx.json(serializer.toJson(result));
         } catch (UnauthorizedException error) {
             ctx.status(401);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         }
     }
 
