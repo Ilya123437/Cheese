@@ -14,8 +14,8 @@ import service.UserService;
 import java.util.Map;
 
 public class SessionHandler {
-
     private final UserService userService;
+    private final Gson serializer = new Gson();
 
     public SessionHandler(UserService userService) {
         this.userService = userService;
@@ -23,10 +23,10 @@ public class SessionHandler {
 
     public void login(Context ctx) {
         try {
-            LoginRequest request = new Gson().fromJson(ctx.body(),LoginRequest.class);
+            LoginRequest request = serializer.fromJson(ctx.body(),LoginRequest.class);
             LoginResult result = userService.login(request);
             ctx.status(200);
-            ctx.json(result);
+            ctx.json(serializer.toJson(result));
         } catch (BadRequestException error) {
             ctx.status(400);
             ctx.json(Map.of("message", error.getMessage()));

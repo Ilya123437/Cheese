@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class GameHandler {
     private final GameService gameService;
+    private final Gson serializer = new Gson();
 
     public GameHandler(GameService gameService) {
         this.gameService = gameService;
@@ -24,7 +25,7 @@ public class GameHandler {
         try {
             ListGamesResult result = gameService.listGames(authToken);
             ctx.status(200);
-            ctx.json(result);
+            ctx.json(serializer.toJson(result));
         } catch (UnauthorizedException error) {
             ctx.status(401);
             ctx.json(Map.of("message", error.getMessage()));
@@ -38,10 +39,10 @@ public class GameHandler {
         String authToken = ctx.header("Authorization");
 
         try {
-            CreateGameRequest request = new Gson().fromJson(ctx.body(),CreateGameRequest.class);
+            CreateGameRequest request = serializer.fromJson(ctx.body(),CreateGameRequest.class);
             CreateGameResult result = gameService.createGame(authToken, request);
             ctx.status(200);
-            ctx.json(result);
+            ctx.json(serializer.toJson(result));
         } catch (BadRequestException error) {
             ctx.status(400);
             ctx.json(Map.of("message", error.getMessage()));
@@ -58,7 +59,7 @@ public class GameHandler {
         String authToken = ctx.header("Authorization");
 
         try {
-            JoinGameRequest request = new Gson().fromJson(ctx.body(),JoinGameRequest.class);
+            JoinGameRequest request = serializer.fromJson(ctx.body(),JoinGameRequest.class);
             gameService.joinGame(authToken, request);
             ctx.status(200);
         } catch (BadRequestException error) {

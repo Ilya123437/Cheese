@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class UserHandler {
     private final UserService userService;
+    private final Gson serializer = new Gson();
 
     public UserHandler(UserService userService) {
         this.userService = userService;
@@ -20,10 +21,10 @@ public class UserHandler {
 
     public void register(Context ctx) {
         try {
-            RegisterRequest request = new Gson().fromJson(ctx.body(),RegisterRequest.class);
+            RegisterRequest request = serializer.fromJson(ctx.body(),RegisterRequest.class);
             RegisterResult result = userService.register(request);
             ctx.status(200);
-            ctx.json(result);
+            ctx.json(serializer.toJson(result));
         } catch (BadRequestException error) {
             ctx.status(400);
             ctx.json(Map.of("message", error.getMessage()));

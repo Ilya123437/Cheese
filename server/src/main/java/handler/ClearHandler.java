@@ -1,5 +1,6 @@
 package handler;
 
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.ClearService;
 
@@ -22,6 +23,5 @@ public class ClearHandler {
             ctx.status(500);
             ctx.json(Map.of("message", error.getMessage()));
         }
-
     }
 }
