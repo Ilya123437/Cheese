@@ -30,7 +30,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public void updateGame(Integer id, GameData data) throws DataAccessException{
-        if (!gameMemory.containsKey(data.gameID())) {
+        if (!gameMemory.containsKey(id)) {
             throw new DataAccessException("Game id does not exist");
         }
         gameMemory.put(id, data);

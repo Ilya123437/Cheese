@@ -50,10 +50,9 @@ public class UserService {
         RequestValidator.validateRequiredFields(request.username(), request.password());
 
         // 401 status handling
-        if (userDAO.getUser(request.username()) == null) {
-            throw new InvalidCredentialsException("User does not exist");
-        } else if (!Objects.equals(userDAO.getUser(request.username()).password(), request.password())) {
-            throw new InvalidCredentialsException("Password is incorrect");
+        UserData user = userDAO.getUser(request.username());
+        if (user == null || !Objects.equals(userDAO.getUser(request.username()).password(), request.password())) {
+            throw new InvalidCredentialsException("Invalid password or username");
         }
 
         // Generating session token

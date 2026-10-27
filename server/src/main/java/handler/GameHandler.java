@@ -1,5 +1,6 @@
 package handler;
 
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.Exceptions.AlreadyTakenException;
 import service.Exceptions.BadRequestException;
@@ -21,7 +22,9 @@ public class GameHandler {
         String authToken = ctx.header("Authorization");
 
         try {
-            gameService.listGames(authToken);
+            ListGamesResult result = gameService.listGames(authToken);
+            ctx.status(200);
+            ctx.json(result);
         } catch (UnauthorizedException error) {
             ctx.status(401);
             ctx.json(Map.of("message", error.getMessage()));
@@ -35,15 +38,13 @@ public class GameHandler {
         String authToken = ctx.header("Authorization");
 
         try {
-            CreateGameRequest request = ctx.bodyAsClass(CreateGameRequest.class);
-
-            CreateGameResult result = gameService.createGame(authToken, new CreateGameRequest(
-                    request.gameName()
-            ));
-
+            CreateGameRequest request = new Gson().fromJson(ctx.body(),CreateGameRequest.class);
+            CreateGameResult result = gameService.createGame(authToken, request);
             ctx.status(200);
             ctx.json(result);
-
+        } catch (BadRequestException error) {
+            ctx.status(400);
+            ctx.json(Map.of("message", error.getMessage()));
         } catch (UnauthorizedException error) {
             ctx.status(401);
             ctx.json(Map.of("message", error.getMessage()));
@@ -57,11 +58,9 @@ public class GameHandler {
         String authToken = ctx.header("Authorization");
 
         try {
-            JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
+            JoinGameRequest request = new Gson().fromJson(ctx.body(),JoinGameRequest.class);
             gameService.joinGame(authToken, request);
-
             ctx.status(200);
-
         } catch (BadRequestException error) {
             ctx.status(400);
             ctx.json(Map.of("message", error.getMessage()));

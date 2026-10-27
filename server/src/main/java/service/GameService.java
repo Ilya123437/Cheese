@@ -4,6 +4,7 @@ import chess.ChessGame;
 import dataaccess.Auth.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.Game.GameDAO;
+import model.AuthData;
 import model.GameData;
 import service.Exceptions.AlreadyTakenException;
 import service.Exceptions.BadRequestException;
@@ -12,9 +13,9 @@ import service.Records.CreateGameResult;
 import service.Records.CreateGameRequest;
 import service.Records.JoinGameRequest;
 import service.Records.ListGamesResult;
-
 import java.util.Objects;
 import java.util.Random;
+import service.util.RequestValidator;
 
 public class GameService {
 
@@ -28,21 +29,22 @@ public class GameService {
 
     public ListGamesResult listGames(String authToken) throws UnauthorizedException, DataAccessException {
         // 401 status handling
-        if (authDAO.getAuth(authToken) == null) {
-            throw new UnauthorizedException("The token does not exist");
-        }
+        authorization(authToken);
         return new ListGamesResult(gameDAO.listGames());
     }
 
-    public CreateGameResult createGame(String authToken, CreateGameRequest request) throws UnauthorizedException, DataAccessException {
-        if (authDAO.getAuth(authToken) == null) {
-            throw new UnauthorizedException("The token does not exist");
-        }
+    public CreateGameResult createGame(String authToken, CreateGameRequest request) throws BadRequestException, UnauthorizedException, DataAccessException {
+        // 401 status handling
+        authorization(authToken);
+        RequestValidator.validateRequiredFields(request.gameName());
 
         // Creating the gameID
-        long seed = System.currentTimeMillis();
-        Random random = new Random(seed);
-        int gameID = random.nextInt(10000);
+        Random random = new Random();
+        int gameID = random.nextInt(Integer.MAX_VALUE);
+
+        while (gameDAO.getGame(gameID) != null) {
+            gameID = random.nextInt(Integer.MAX_VALUE);
+        }
 
         // Creating an instance of ChessGame
         ChessGame game = new ChessGame();
@@ -54,24 +56,24 @@ public class GameService {
 
     public void joinGame(String authToken, JoinGameRequest request) throws UnauthorizedException, AlreadyTakenException, DataAccessException, BadRequestException {
         // 401 status handling
-        if (authDAO.getAuth(authToken) == null) {
+        AuthData authData = authDAO.getAuth((authToken));
+        if (authData == null) {
             throw new UnauthorizedException("The token does not exist");
         }
 
         // 400 status handling
+        if (request == null || request.gameID() == null) {
+            throw new BadRequestException("gameID is missing");
+        }
         if (!Objects.equals(request.playerColor(), "WHITE") && !Objects.equals(request.playerColor(), "BLACK")) {
             throw new BadRequestException("playerColor must be WHITE or BLACK");
         }
-
         GameData gameData = gameDAO.getGame(request.gameID());
-
-        // 400 status handling
         if (gameData == null) {
             throw new BadRequestException("Game not found");
         }
 
-        String username = authDAO.getAuth(authToken).username();
-
+        String username = authData.username();
         if (request.playerColor().equals("WHITE")) {
             // 403 status handling
             if (gameData.whiteUsername() != null) {
@@ -88,6 +90,12 @@ public class GameService {
 
             GameData updatedGame = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
             gameDAO.updateGame(request.gameID(), updatedGame);
+        }
+    }
+
+    private void authorization(String authToken) throws UnauthorizedException{
+        if (authDAO.getAuth(authToken) == null) {
+            throw new UnauthorizedException("The token does not exist");
         }
     }
 }
