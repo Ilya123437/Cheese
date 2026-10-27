@@ -58,26 +58,26 @@ public class GameService {
         // 401 status handling
         AuthData authData = authDAO.getAuth((authToken));
         if (authData == null) {
-            throw new UnauthorizedException("The token does not exist");
+            throw new UnauthorizedException("Error: The token does not exist");
         }
 
         // 400 status handling
         if (request == null || request.gameID() == null) {
-            throw new BadRequestException("gameID is missing");
+            throw new BadRequestException("Error: gameID is missing");
         }
         if (!Objects.equals(request.playerColor(), "WHITE") && !Objects.equals(request.playerColor(), "BLACK")) {
-            throw new BadRequestException("playerColor must be WHITE or BLACK");
+            throw new BadRequestException("Error: playerColor must be WHITE or BLACK");
         }
         GameData gameData = gameDAO.getGame(request.gameID());
         if (gameData == null) {
-            throw new BadRequestException("Game not found");
+            throw new BadRequestException("Error: Game not found");
         }
 
         String username = authData.username();
         if (request.playerColor().equals("WHITE")) {
             // 403 status handling
             if (gameData.whiteUsername() != null) {
-                throw new AlreadyTakenException("White player slot already taken");
+                throw new AlreadyTakenException("Error: White player slot already taken");
             }
 
             GameData updatedGame = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game());
@@ -85,7 +85,7 @@ public class GameService {
         } else {
             // 403 status handling
             if (gameData.blackUsername() != null) {
-                throw new AlreadyTakenException("Black player slot already taken");
+                throw new AlreadyTakenException("Error: Black player slot already taken");
             }
 
             GameData updatedGame = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
@@ -95,7 +95,7 @@ public class GameService {
 
     private void authorization(String authToken) throws UnauthorizedException{
         if (authDAO.getAuth(authToken) == null) {
-            throw new UnauthorizedException("The token does not exist");
+            throw new UnauthorizedException("Error: The token does not exist");
         }
     }
 }

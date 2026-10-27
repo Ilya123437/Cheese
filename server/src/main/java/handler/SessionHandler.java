@@ -29,13 +29,16 @@ public class SessionHandler {
             ctx.json(serializer.toJson(result));
         } catch (BadRequestException error) {
             ctx.status(400);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         } catch (InvalidCredentialsException error) {
             ctx.status(401);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         }
     }
 
@@ -47,10 +50,12 @@ public class SessionHandler {
             ctx.status(200);
         } catch (UnauthorizedException error) {
             ctx.status(401);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         }
     }
 }

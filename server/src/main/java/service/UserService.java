@@ -32,7 +32,7 @@ public class UserService {
 
         // 403 status handling
         if(userDAO.getUser(request.username()) != null) {
-            throw new AlreadyTakenException("Username is already taken");
+            throw new AlreadyTakenException("Error: Username is already taken");
         }
 
         UserData user = new UserData(request.username(), request.password(), request.email());
@@ -52,7 +52,7 @@ public class UserService {
         // 401 status handling
         UserData user = userDAO.getUser(request.username());
         if (user == null || !Objects.equals(userDAO.getUser(request.username()).password(), request.password())) {
-            throw new InvalidCredentialsException("Invalid password or username");
+            throw new InvalidCredentialsException("Error: Invalid password or username");
         }
 
         // Generating session token
@@ -66,7 +66,7 @@ public class UserService {
     public void logout(String authToken) throws UnauthorizedException, DataAccessException{
         // 401 status handling
         if (authDAO.getAuth(authToken) == null) {
-            throw new UnauthorizedException("The token does not exist");
+            throw new UnauthorizedException("Error: The token does not exist");
         }
         authDAO.deleteAuth(authToken);
     }

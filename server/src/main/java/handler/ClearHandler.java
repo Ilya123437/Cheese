@@ -21,7 +21,8 @@ public class ClearHandler {
             ctx.status(200);
         } catch (DataAccessException error) {
             ctx.status(500);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         }
     }
 }

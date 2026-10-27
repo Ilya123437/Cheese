@@ -64,16 +64,20 @@ public class GameHandler {
             ctx.status(200);
         } catch (BadRequestException error) {
             ctx.status(400);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         } catch (UnauthorizedException error) {
             ctx.status(401);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         } catch (AlreadyTakenException error) {
             ctx.status(403);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);
-            ctx.json(Map.of("message", error.getMessage()));
+            ctx.result(String.format("""
+                {"message": "%s"}""",error.getMessage()));
         }
     }
 
