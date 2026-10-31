@@ -2,6 +2,8 @@ package server;
 
 import dataaccess.Auth.AuthDAO;
 import dataaccess.Auth.MemoryAuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.Game.GameDAO;
 import dataaccess.Game.MemoryGameDAO;
 import dataaccess.User.MemoryUserDAO;
@@ -21,6 +23,13 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.createTables();
+        } catch (DataAccessException error) {
+            System.out.println("Error : " + error);
+        }
+
 
         // Register your endpoints and exception handlers here.
         UserDAO userDAO = new MemoryUserDAO();
