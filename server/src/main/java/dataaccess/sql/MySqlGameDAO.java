@@ -8,6 +8,7 @@ import model.AuthData;
 import model.GameData;
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class MySqlGameDAO {
@@ -29,6 +30,7 @@ public class MySqlGameDAO {
             String jsonGame = gson.toJson(data.game());
             statement.setString(5, jsonGame);
 
+            statement.executeUpdate();
         } catch (SQLException error) {
             throw new DataAccessException("Error: Problem with createAuth");
         }
@@ -41,13 +43,13 @@ public class MySqlGameDAO {
         try (var connection = DatabaseManager.getConnection();
              var statement = connection.prepareStatement(sqlCommand)) {
             statement.setInt(1, id);
-            try (var resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Integer gameID = resultSet.getInt("gameID");
-                    String whiteUsername = resultSet.getString("whiteUsername");
-                    String blackUsername = resultSet.getString("blackUsername");
-                    String gameName = resultSet.getString("gameName");
-                    String jsonGame = resultSet.getString("game");
+            try (var result = statement.executeQuery()) {
+                if (result.next()) {
+                    Integer gameID = result.getInt("gameID");
+                    String whiteUsername = result.getString("whiteUsername");
+                    String blackUsername = result.getString("blackUsername");
+                    String gameName = result.getString("gameName");
+                    String jsonGame = result.getString("game");
 
                     ChessGame game = gson.fromJson(jsonGame, ChessGame.class);
 
@@ -62,11 +64,59 @@ public class MySqlGameDAO {
     }
 
     public Collection<GameData> listGames() throws DataAccessException {
+        String sqlCommand = """
+                SELECT * FROM GameData;
+                """;
+        try (var connection = DatabaseManager.getConnection();
+             var statement = connection.prepareStatement(sqlCommand);
+             var result = statement.executeQuery()) {
+            Collection<GameData> games = new ArrayList<>();
 
+            while (result.next()) {
+                Integer gameID = result.getInt("gameID");
+                String whiteUsername = result.getString("whiteUsername");
+                String blackUsername = result.getString("blackUsername");
+                String gameName = result.getString("gameName");
+
+                String jsonGame = result.getString("game");
+                ChessGame game = gson.fromJson(jsonGame, ChessGame.class);
+
+                GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+                games.add(gameData);
+            }
+            return games;
+
+
+        } catch (SQLException error) {
+            throw new DataAccessException("Error: Problem retrieving listGames");
+        }
     }
 
     public void updateGame(Integer id, GameData data) throws DataAccessException {
+        String sqlCommand = """
+                UPDATE GameData
+                SET whiteUsername = ?,
+                    blackUsername = ?,
+                    gameName = ?,
+                    game = ?
+                WHERE gameID = ?;
+                """;
+        try (var connection = DatabaseManager.getConnection();
+             var statement = connection.prepareStatement(sqlCommand)) {
+            statement.setString(1, data.whiteUsername());
+            statement.setString(2, data.blackUsername());
+            statement.setString(3, data.gameName());
 
+            String jsonGame = gson.toJson(data.game());
+            statement.setString(4, jsonGame);
+
+            statement.setInt(5, id);
+
+            statement.executeUpdate();
+
+        } catch (SQLException error) {
+            throw new DataAccessException("Error: Problem updating the game");
+        }
     }
 
     public void clear() throws DataAccessException {
@@ -77,7 +127,7 @@ public class MySqlGameDAO {
              var statement = connection.prepareStatement(sqlCommand)) {
             statement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem deleting authToken from Database");
+            throw new DataAccessException("Error: Problem clearing GameData");
         }
     }
 }

@@ -28,10 +28,10 @@ public class MySqlAuthDAO {
         try (var connection = DatabaseManager.getConnection();
              var statement = connection.prepareStatement(sqlCommand)) {
             statement.setString(1, authToken);
-            try (var resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    String token = resultSet.getString("authToken");
-                    String username = resultSet.getString("username");
+            try (var result = statement.executeQuery()) {
+                if (result.next()) {
+                    String token = result.getString("authToken");
+                    String username = result.getString("username");
 
                     return new AuthData(token, username);
                 } else {
@@ -64,7 +64,7 @@ public class MySqlAuthDAO {
              var statement = connection.prepareStatement(sqlCommand)) {
             statement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem deleting authToken from Database");
+            throw new DataAccessException("Error: Problem clearing AuthData");
         }
 
     }
