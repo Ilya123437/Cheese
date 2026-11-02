@@ -3,6 +3,7 @@ package dataaccess.sql;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
@@ -16,11 +17,12 @@ public class MySqlUserDAO {
                 """;
         try (var connection = DatabaseManager.getConnection();
              var statement = connection.prepareStatement(sqlCommand)) {
+            String hashedPassword = BCrypt.hashpw(data.password(), BCrypt.gensalt());
             statement.setString(1, data.username());
-            statement.setString(2, data.password());
+            statement.setString(2, hashedPassword);
             statement.setString(3, data.email());
-            // need to include function in here to hash the password and then store it
 
+            statement.executeUpdate();
         } catch (SQLException error) {
             throw new DataAccessException("Error: Problem with creating the User");
         }
