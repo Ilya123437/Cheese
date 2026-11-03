@@ -4,9 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
-import model.AuthData;
 import model.GameData;
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +30,7 @@ public class MySqlGameDAO {
 
             statement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem with createAuth");
+            throw new DataAccessException("Error: Problem creating game", error);
         }
     }
 
@@ -59,7 +57,7 @@ public class MySqlGameDAO {
                 }
             }
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem retrieving authentication data");
+            throw new DataAccessException("Error: Problem retrieving authentication data", error);
         }
     }
 
@@ -88,7 +86,7 @@ public class MySqlGameDAO {
 
 
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem retrieving listGames");
+            throw new DataAccessException("Error: Problem retrieving listGames", error);
         }
     }
 
@@ -115,7 +113,7 @@ public class MySqlGameDAO {
             statement.executeUpdate();
 
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem updating the game");
+            throw new DataAccessException("Error: Problem updating the game", error);
         }
     }
 
@@ -127,7 +125,7 @@ public class MySqlGameDAO {
              var statement = connection.prepareStatement(sqlCommand)) {
             statement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem clearing GameData");
+            throw new DataAccessException("Error: Problem clearing GameData", error);
         }
     }
 }

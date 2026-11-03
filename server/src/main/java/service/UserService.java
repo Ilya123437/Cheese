@@ -5,6 +5,7 @@ import dataaccess.User.UserDAO;
 import dataaccess.Auth.AuthDAO;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.Exceptions.AlreadyTakenException;
 import service.Exceptions.BadRequestException;
 import service.Exceptions.InvalidCredentialsException;
@@ -51,7 +52,8 @@ public class UserService {
 
         // 401 status handling
         UserData user = userDAO.getUser(request.username());
-        if (user == null || !Objects.equals(userDAO.getUser(request.username()).password(), request.password())) {
+
+        if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
             throw new InvalidCredentialsException("Error: Invalid password or username");
         }
 

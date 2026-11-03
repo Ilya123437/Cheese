@@ -15,9 +15,9 @@ public class MySqlAuthDAO {
              var statement = connection.prepareStatement(sqlCommand)) {
             statement.setString(1, data.authToken());
             statement.setString(2, data.username());
-
+            statement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem with createAuth");
+            throw new DataAccessException("Error: Problem with createAuth", error);
         }
     }
 
@@ -39,7 +39,7 @@ public class MySqlAuthDAO {
                 }
             }
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem retrieving authentication data");
+            throw new DataAccessException("Error: Problem retrieving authentication data", error);
         }
     }
 
@@ -52,7 +52,7 @@ public class MySqlAuthDAO {
             statement.setString(1, authToken);
             statement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem deleting authToken from Database");
+            throw new DataAccessException("Error: Problem deleting authToken from Database", error);
         }
     }
 
@@ -64,7 +64,7 @@ public class MySqlAuthDAO {
              var statement = connection.prepareStatement(sqlCommand)) {
             statement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("Error: Problem clearing AuthData");
+            throw new DataAccessException("Error: Problem clearing AuthData", error);
         }
 
     }
