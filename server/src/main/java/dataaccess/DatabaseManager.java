@@ -20,30 +20,25 @@ public class DatabaseManager {
      * Creates the database if it does not already exist.
      */
     static public void createDatabase() throws DataAccessException {
-        System.out.println("Bozo is at the top");
         var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-        System.out.println("Bozo after statement initialization");
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
              var preparedStatement = conn.prepareStatement(statement)) {
-            System.out.println("Bozo before middle");
             preparedStatement.executeUpdate();
-            System.out.println("Bozo is in the middle");
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create database", ex);
         }
     }
 
     static public void createTables() throws DataAccessException{
-        System.out.println("Bozo is in create tables");
-        var statement = "CREATE TABLE IF NOT EXISTS AuthData(\n" +
+        var authDataTable = "CREATE TABLE IF NOT EXISTS AuthData(\n" +
                 "    authToken VARCHAR(255) PRIMARY KEY ,\n" +
                 "    username VARCHAR(255) NOT NULL\n" +
-                ");\n" +
-                "CREATE TABLE IF NOT EXISTS UserData(\n" +
+                ");";
+        var userDataTable = "CREATE TABLE IF NOT EXISTS UserData(\n" +
                 "    username VARCHAR(255) PRIMARY KEY, \n" +
                 "    password VARCHAR(255) NOT NULL, \n" +
-                "    email VARCHAR(255) NOT NULL);\n" +
-                "CREATE TABLE IF NOT EXISTS GameData(\n" +
+                "    email VARCHAR(255) NOT NULL);";
+        var gameDataTable = "CREATE TABLE IF NOT EXISTS GameData(\n" +
                 "    gameID INT PRIMARY KEY, \n" +
                 "    whiteUsername VARCHAR(255) ,\n" +
                 "    blackUsername VARCHAR(255) ,\n" +
@@ -52,10 +47,15 @@ public class DatabaseManager {
 
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)) {
             conn.setCatalog(databaseName);
-            var preparedStatement = conn.prepareStatement(statement);
-            System.out.println("Bozo is creating tables");
-            preparedStatement.executeUpdate();
-            System.out.println("Bozo created tables");
+            var preparedStatementAuth = conn.prepareStatement(authDataTable);
+            preparedStatementAuth.executeUpdate();
+
+            var preparedStatementUser = conn.prepareStatement(userDataTable);
+            preparedStatementUser.executeUpdate();
+
+            var preparedStatementGame = conn.prepareStatement(gameDataTable);
+            preparedStatementGame.executeUpdate();
+
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw new DataAccessException("failed to create tables", ex);
@@ -78,9 +78,7 @@ public class DatabaseManager {
         try {
             //do not wrap the following line with a try-with-resources
             var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
-            System.out.println("Bozo after initializing the conn variable");
             conn.setCatalog(databaseName);
-
             return conn;
         } catch (SQLException ex) {
             throw new DataAccessException("failed to get connection", ex);
@@ -89,7 +87,6 @@ public class DatabaseManager {
 
     private static void loadPropertiesFromResources() {
         try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
-            System.out.println("Bozo is in load Properties");
             if (propStream == null) {
                 throw new Exception("Unable to load db.properties");
             }

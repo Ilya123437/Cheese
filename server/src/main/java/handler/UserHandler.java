@@ -28,15 +28,15 @@ public class UserHandler {
         } catch (BadRequestException error) {
             ctx.status(400);
             ctx.result(String.format("""
-                {"Error": "%s"}""",error.getMessage()));
+                {"message": "%s"}""",error.getMessage()));
         } catch (AlreadyTakenException error) {
             ctx.status(403);
             ctx.result(String.format("""
-                {"Error": "%s"}""",error.getMessage()));
+                {"message": "%s"}""",error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);
             ctx.result(String.format("""
-                {"Error": "%s"}""",error.getMessage()));
+                {"message": "%s"}""",error.getMessage()));
         }
     }
 }

@@ -29,7 +29,6 @@ public class Server {
         try {
             DatabaseManager.createDatabase();
             DatabaseManager.createTables();
-            System.out.println("TEsting 123");
         } catch (DataAccessException error) {
             System.out.println("Error : " + error);
         }

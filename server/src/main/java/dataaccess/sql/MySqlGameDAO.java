@@ -2,6 +2,7 @@ package dataaccess.sql;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.Game.GameDAO;
@@ -12,9 +13,25 @@ import java.util.Collection;
 
 public class MySqlGameDAO implements GameDAO {
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 
     public void createGame(GameData data) throws DataAccessException {
+        String checkAlreadyThere = """
+                SELECT * FROM GameData WHERE gameID = ?;
+                """;
+
+        try (var connection = DatabaseManager.getConnection();
+             var statement = connection.prepareStatement(checkAlreadyThere)) {
+            statement.setInt(1, data.gameID());
+            try (var result = statement.executeQuery()) {
+                if (result.next()) {
+                    throw new DataAccessException("Game id already exists");
+                }
+            }
+        } catch (SQLException error) {
+            throw new DataAccessException("Error: Problem checking already there authToken", error);
+        }
+
         String sqlCommand = """
                 INSERT INTO GameData (gameID, whiteUsername, blackUsername, gameName, game)
                 VALUES (?, ?, ?, ?, ?)
@@ -92,6 +109,21 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     public void updateGame(Integer id, GameData data) throws DataAccessException {
+        String checkAlreadyThere = """
+                SELECT * FROM GameData WHERE gameID = ?;
+                """;
+        try (var connection = DatabaseManager.getConnection();
+             var statement = connection.prepareStatement(checkAlreadyThere)) {
+            statement.setInt(1, id);
+            try (var result = statement.executeQuery()) {
+                if (!result.next()) {
+                    throw new DataAccessException("Game id does not exist");
+                }
+            }
+        } catch (SQLException error) {
+            throw new DataAccessException("Error: Problem checking already there authToken", error);
+        }
+
         String sqlCommand = """
                 UPDATE GameData
                 SET whiteUsername = ?,

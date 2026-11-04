@@ -8,6 +8,22 @@ import java.sql.SQLException;
 
 public class MySqlAuthDAO implements AuthDAO {
     public void createAuth(AuthData data) throws DataAccessException {
+        String checkAlreadyThere = """
+                SELECT * FROM AuthData WHERE authToken = ?;
+                """;
+
+        try (var connection = DatabaseManager.getConnection();
+             var statement = connection.prepareStatement(checkAlreadyThere)) {
+            statement.setString(1, data.authToken());
+            try (var result = statement.executeQuery()) {
+                if (result.next()) {
+                    throw new DataAccessException("Auth token already exists");
+                }
+            }
+        } catch (SQLException error) {
+            throw new DataAccessException("Error: Problem checking already there authToken", error);
+        }
+
         String sqlCommand = """
                 INSERT INTO AuthData (authToken, username)
                 VALUES (?,?)

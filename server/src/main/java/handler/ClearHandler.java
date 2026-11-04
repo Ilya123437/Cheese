@@ -20,7 +20,7 @@ public class ClearHandler {
         } catch (DataAccessException error) {
             ctx.status(500);
             ctx.result(String.format("""
-                {"Error": "%s"}""",error.getMessage()));
+                {"message": "%s"}""",error.getMessage()));
         }
     }
 }
