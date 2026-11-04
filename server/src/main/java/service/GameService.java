@@ -93,9 +93,13 @@ public class GameService {
         }
     }
 
-    private void authorization(String authToken) throws UnauthorizedException{
-        if (authDAO.getAuth(authToken) == null) {
-            throw new UnauthorizedException("Error: The token does not exist");
+    private void authorization(String authToken) throws UnauthorizedException, DataAccessException{
+        try {
+            if (authDAO.getAuth(authToken) == null) {
+                throw new UnauthorizedException("Error: The token does not exist");
+            }
+        } catch (DataAccessException error) {
+            throw new DataAccessException("Error: Problem authorizing", error);
         }
     }
 }

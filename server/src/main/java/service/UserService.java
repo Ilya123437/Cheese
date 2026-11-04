@@ -15,7 +15,7 @@ import service.Records.LoginResult;
 import service.Records.RegisterRequest;
 import service.Records.RegisterResult;
 import service.util.RequestValidator;
-import java.util.Objects;
+
 import java.util.UUID;
 
 public class UserService {

@@ -1,11 +1,12 @@
 package dataaccess.sql;
 
+import dataaccess.Auth.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import model.AuthData;
 import java.sql.SQLException;
 
-public class MySqlAuthDAO {
+public class MySqlAuthDAO implements AuthDAO {
     public void createAuth(AuthData data) throws DataAccessException {
         String sqlCommand = """
                 INSERT INTO AuthData (authToken, username)
@@ -43,7 +44,7 @@ public class MySqlAuthDAO {
         }
     }
 
-    public void deleteAuth(String authToken) throws DataAccessException{
+    public void deleteAuth(String authToken) throws DataAccessException {
         String sqlCommand = """
                 DELETE FROM AuthData WHERE authToken = ?;
                 """;

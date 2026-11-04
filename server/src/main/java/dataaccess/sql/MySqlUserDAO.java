@@ -2,17 +2,19 @@ package dataaccess.sql;
 
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
+import dataaccess.User.UserDAO;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.SQLException;
 
-public class MySqlUserDAO {
+public class MySqlUserDAO implements UserDAO {
 
     public void createUser(UserData data) throws DataAccessException {
         String sqlCommand = """
                 INSERT INTO UserData (username, password, email)
                 VALUES (?, ?, ?)
                 """;
+
         try (var connection = DatabaseManager.getConnection();
              var statement = connection.prepareStatement(sqlCommand)) {
             String hashedPassword = BCrypt.hashpw(data.password(), BCrypt.gensalt());

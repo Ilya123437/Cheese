@@ -8,6 +8,9 @@ import dataaccess.Game.GameDAO;
 import dataaccess.Game.MemoryGameDAO;
 import dataaccess.User.MemoryUserDAO;
 import dataaccess.User.UserDAO;
+import dataaccess.sql.MySqlAuthDAO;
+import dataaccess.sql.MySqlGameDAO;
+import dataaccess.sql.MySqlUserDAO;
 import handler.ClearHandler;
 import handler.GameHandler;
 import handler.SessionHandler;
@@ -26,15 +29,16 @@ public class Server {
         try {
             DatabaseManager.createDatabase();
             DatabaseManager.createTables();
+            System.out.println("TEsting 123");
         } catch (DataAccessException error) {
             System.out.println("Error : " + error);
         }
 
 
         // Register your endpoints and exception handlers here.
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
+        UserDAO userDAO = new MySqlUserDAO();
+        AuthDAO authDAO = new MySqlAuthDAO();
+        GameDAO gameDAO = new MySqlGameDAO();
 
         UserService userService = new UserService(userDAO, authDAO);
         GameService gameService = new GameService(authDAO, gameDAO);

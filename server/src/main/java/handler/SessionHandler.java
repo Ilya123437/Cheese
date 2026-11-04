@@ -30,15 +30,15 @@ public class SessionHandler {
         } catch (BadRequestException error) {
             ctx.status(400);
             ctx.result(String.format("""
-                {"message": "%s"}""",error.getMessage()));
+                {"Error": "%s"}""",error.getMessage()));
         } catch (InvalidCredentialsException error) {
             ctx.status(401);
             ctx.result(String.format("""
-                {"message": "%s"}""",error.getMessage()));
+                {"Error": "%s"}""",error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);
             ctx.result(String.format("""
-                {"message": "%s"}""",error.getMessage()));
+                {"Error": "%s"}""",error.getMessage()));
         }
     }
 
@@ -51,11 +51,11 @@ public class SessionHandler {
         } catch (UnauthorizedException error) {
             ctx.status(401);
             ctx.result(String.format("""
-                {"message": "%s"}""",error.getMessage()));
+                {"Error": "%s"}""",error.getMessage()));
         } catch (DataAccessException error) {
             ctx.status(500);
             ctx.result(String.format("""
-                {"message": "%s"}""",error.getMessage()));
+                {"Error": "%s"}""",error.getMessage()));
         }
     }
 }

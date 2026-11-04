@@ -1,5 +1,7 @@
 package service;
 
+import dataaccess.sql.MySqlAuthDAO;
+import dataaccess.sql.MySqlUserDAO;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +11,7 @@ import service.Records.RegisterRequest;
 import service.Records.RegisterResult;
 
 public class UserServiceTests {
-    private final UserService service = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
+    private final UserService service = new UserService(new MySqlUserDAO(), new MySqlAuthDAO());
 
     @Test
     public void registerSuccess() throws Exception {
