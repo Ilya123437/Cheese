@@ -57,4 +57,17 @@ public class ServerFacadeTests {
         assertThrows(RuntimeException.class, () -> {facade.register("bozo", "bozopassword", "bozo@yahoo.com");});
     }
 
+    @Test
+    public void loginSuccess() throws IOException, InterruptedException {
+        facade.register("bozo", "bozopassword", "bozo@yahoo.com");
+        AuthData authData = facade.login("bozo", "bozopassword");
+        assertEquals("bozo", authData.username());
+        assertNotNull(authData.authToken());
+    }
+
+    @Test
+    public void loginFailure() throws IOException, InterruptedException {
+        assertThrows(RuntimeException.class, () -> {facade.login("bozo", "bozopassword");});
+    }
+
 }

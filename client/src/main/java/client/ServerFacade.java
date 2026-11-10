@@ -8,8 +8,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class ServerFacade {
@@ -40,15 +38,32 @@ public class ServerFacade {
 
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        if (httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300) {
+        if (httpResponse.statusCode() == 200) {
             return gson.fromJson(httpResponse.body(), AuthData.class);
         } else {
             throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
         }
     }
 
-    public void login(String username, String password) {
+    public AuthData login(String username, String password) throws IOException, InterruptedException{
+        Map<String, String> request = Map.of(
+                "username", username,
+                "password", password
+        );
+        String json = gson.toJson(request);
 
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/user"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        if (httpResponse.statusCode() == 200) {
+            return gson.fromJson(httpResponse.body(), AuthData.class);
+        } else {
+            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+        }
     }
 
     public void logout(String authToken) {
