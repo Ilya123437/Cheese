@@ -5,9 +5,12 @@ import dataaccess.sql.MySqlAuthDAO;
 import dataaccess.sql.MySqlGameDAO;
 import dataaccess.sql.MySqlUserDAO;
 import model.AuthData;
+import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import java.io.IOException;
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -68,6 +71,34 @@ public class ServerFacadeTests {
     @Test
     public void loginFailure() throws IOException, InterruptedException {
         assertThrows(RuntimeException.class, () -> {facade.login("bozo", "bozopassword");});
+    }
+
+    @Test
+    public void logoutSuccess() throws IOException, InterruptedException {
+        facade.register("bozo", "bozopassword", "bozo@yahoo.com");
+        AuthData authData = facade.login("bozo", "bozopassword");
+        assertDoesNotThrow(() -> facade.logout(authData.authToken()));
+    }
+
+    @Test
+    public void createGameSuccess() throws IOException, InterruptedException {
+        facade.register("bozo", "bozopassword", "bozo@yahoo.com");
+        AuthData authData = facade.login("bozo", "bozopassword");
+        int gameID = facade.createGame(authData.authToken(), "im not a smurf i promise");
+        assertTrue(gameID > 0);
+    }
+
+    @Test
+    public void listGamesSuccess() throws IOException, InterruptedException {
+        facade.register("bozo", "bozopassword", "bozo@yahoo.com");
+        AuthData authData = facade.login("bozo", "bozopassword");
+        facade.createGame(authData.authToken(), "squid game");
+        facade.createGame(authData.authToken(), "Go is better than Chess");
+        Collection<GameData> games = facade.listGames(authData.authToken());
+        assertFalse(games.isEmpty());
+        for (GameData game : games) {
+            assertNotNull(game.gameName());
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import service.Exceptions.AlreadyTakenException;
 import service.Exceptions.BadRequestException;
@@ -13,7 +14,9 @@ import java.util.Map;
 
 public class GameHandler {
     private final GameService gameService;
-    private final Gson serializer = new Gson();
+    private final Gson serializer = new GsonBuilder()
+            .enableComplexMapKeySerialization()
+            .create();
 
     public GameHandler(GameService gameService) {
         this.gameService = gameService;
