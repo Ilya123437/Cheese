@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.sql.MySqlAuthDAO;
 import dataaccess.sql.MySqlGameDAO;
@@ -99,6 +100,40 @@ public class ServerFacadeTests {
         for (GameData game : games) {
             assertNotNull(game.gameName());
         }
+    }
+
+    @Test
+    public void joinGameAsWhiteSuccess() throws IOException, InterruptedException {
+        facade.register("bozo", "bozopassword", "bozo@yahoo.com");
+        AuthData authData = facade.login("bozo", "bozopassword");
+        int gameID = facade.createGame(authData.authToken(), "Go is better than Chess");
+        facade.joinGame(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
+        Collection<GameData> games = facade.listGames(authData.authToken());
+        GameData joinedGame = null;
+        for (GameData game : games) {
+            joinedGame = game;
+        }
+        assertNotNull(joinedGame);
+        assertEquals("Go is better than Chess", joinedGame.gameName());
+        assertEquals("bozo", joinedGame.whiteUsername());
+        assertNull(joinedGame.blackUsername());
+    }
+
+    @Test
+    public void joinGameAsBlackSuccess() throws IOException, InterruptedException {
+        facade.register("bozo", "bozopassword", "bozo@yahoo.com");
+        AuthData authData = facade.login("bozo", "bozopassword");
+        int gameID = facade.createGame(authData.authToken(), "Go is better than Chess");
+        facade.joinGame(authData.authToken(), gameID, ChessGame.TeamColor.BLACK);
+        Collection<GameData> games = facade.listGames(authData.authToken());
+        GameData joinedGame = null;
+        for (GameData game : games) {
+            joinedGame = game;
+        }
+        assertNotNull(joinedGame);
+        assertEquals("Go is better than Chess", joinedGame.gameName());
+        assertEquals("bozo", joinedGame.blackUsername());
+        assertNull(joinedGame.whiteUsername());
     }
 
 }

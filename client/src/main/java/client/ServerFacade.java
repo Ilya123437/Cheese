@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.AuthData;
@@ -72,10 +73,6 @@ public class ServerFacade {
     }
 
     public void logout(String authToken) throws IOException, InterruptedException{
-        Map<String, String> request = Map.of(
-                "authToken", authToken
-        );
-        String json = gson.toJson(request);
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + "/session"))
                 .header("Authorization", authToken)
@@ -129,8 +126,27 @@ public class ServerFacade {
         }
     }
 
-    public void joinGame(String authToken, Integer gameID, String color) {
+    public void joinGame(String authToken, Integer gameID, ChessGame.TeamColor color) throws IOException, InterruptedException {
+        Map<String, Object> request = Map.of(
+                "gameID", gameID,
+                "playerColor", color
+        );
+        String json = gson.toJson(request);
 
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/game"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", authToken)
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        if (httpResponse.statusCode() == 200) {
+            return;
+        } else {
+            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+        }
     }
 
 }
