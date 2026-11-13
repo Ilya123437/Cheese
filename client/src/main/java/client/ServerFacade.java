@@ -1,11 +1,11 @@
 package client;
 
 import chess.ChessGame;
+import client.Exceptions.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.AuthData;
 import model.GameData;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -28,7 +28,7 @@ public class ServerFacade {
                 .create();
     }
 
-    public AuthData register(String username, String password, String email) throws IOException, InterruptedException {
+    public AuthData register(String username, String password, String email) throws DataAccessException, IOException, InterruptedException, AlreadyTakenException {
         Map<String, String> request = Map.of(
                 "username", username,
                 "password", password,
@@ -46,12 +46,14 @@ public class ServerFacade {
 
         if (httpResponse.statusCode() == 200) {
             return gson.fromJson(httpResponse.body(), AuthData.class);
+        } else if (httpResponse.statusCode() == 403) {
+            throw new AlreadyTakenException("Username already taken");
         } else {
-            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+            throw handleError(httpResponse.statusCode());
         }
     }
 
-    public AuthData login(String username, String password) throws IOException, InterruptedException{
+    public AuthData login(String username, String password) throws DataAccessException, AlreadyTakenException, IOException, InterruptedException{
         Map<String, String> request = Map.of(
                 "username", username,
                 "password", password
@@ -67,12 +69,14 @@ public class ServerFacade {
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         if (httpResponse.statusCode() == 200) {
             return gson.fromJson(httpResponse.body(), AuthData.class);
+        } else if (httpResponse.statusCode() == 401) {
+          throw new InvalidCredentialsException("Invalid username or password");
         } else {
-            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+            throw handleError(httpResponse.statusCode());
         }
     }
 
-    public void logout(String authToken) throws IOException, InterruptedException{
+    public void logout(String authToken) throws AlreadyTakenException, IOException, InterruptedException, DataAccessException {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + "/session"))
                 .header("Authorization", authToken)
@@ -82,13 +86,12 @@ public class ServerFacade {
         if (httpResponse.statusCode() == 200) {
             return;
         } else {
-            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+            throw handleError(httpResponse.statusCode());
         }
     }
 
-    public int createGame(String authToken, String gameName) throws IOException, InterruptedException{
+    public int createGame(String authToken, String gameName) throws DataAccessException, AlreadyTakenException, IOException, InterruptedException{
         Map<String, String> request = Map.of(
-                "authToken", authToken,
                 "gameName", gameName
         );
 
@@ -104,11 +107,11 @@ public class ServerFacade {
             CreateGameResult response = gson.fromJson(httpResponse.body(), CreateGameResult.class);
             return response.gameID();
         } else {
-            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+            throw handleError(httpResponse.statusCode());
         }
     }
 
-    public Collection<GameData> listGames(String authToken) throws IOException, InterruptedException {
+    public Collection<GameData> listGames(String authToken) throws AlreadyTakenException, DataAccessException, IOException, InterruptedException {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + "/game"))
                 .header("Content-Type", "application/json")
@@ -122,11 +125,11 @@ public class ServerFacade {
             ListGamesResult response = gson.fromJson(httpResponse.body(), ListGamesResult.class);
             return response.games();
         } else {
-            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+            throw handleError(httpResponse.statusCode());
         }
     }
 
-    public void joinGame(String authToken, Integer gameID, ChessGame.TeamColor color) throws IOException, InterruptedException {
+    public void joinGame(String authToken, Integer gameID, ChessGame.TeamColor color) throws DataAccessException, AlreadyTakenException, IOException, InterruptedException {
         Map<String, Object> request = Map.of(
                 "gameID", gameID,
                 "playerColor", color
@@ -145,7 +148,21 @@ public class ServerFacade {
         if (httpResponse.statusCode() == 200) {
             return;
         } else {
-            throw new RuntimeException("Error: status code is " + httpResponse.statusCode());
+            throw handleError(httpResponse.statusCode());
+        }
+    }
+
+    private RuntimeException handleError(int statusCode) throws DataAccessException, AlreadyTakenException{
+        if (statusCode == 400) {
+            return new BadRequestException("Bad Request");
+        } else if (statusCode == 401) {
+            return new UnauthorizedException("Unauthorized");
+        } else if (statusCode == 403) {
+            return new AlreadyTakenException("Already taken");
+        } else if (statusCode == 500) {
+            return new DataAccessException("Server error");
+        } else {
+            return new RuntimeException("Unhandled status code" + statusCode);
         }
     }
 
