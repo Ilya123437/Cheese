@@ -2,6 +2,8 @@ package client;
 
 import chess.ChessGame;
 import client.Exceptions.*;
+import client.Records.CreateGameResult;
+import client.Records.ListGamesResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.AuthData;

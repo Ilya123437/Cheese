@@ -1,4 +1,4 @@
-package client;
+package client.Records;
 
 import model.GameData;
 

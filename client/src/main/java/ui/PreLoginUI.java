@@ -2,11 +2,11 @@ package ui;
 
 import client.Exceptions.AlreadyTakenException;
 import client.Exceptions.InvalidCredentialsException;
-import client.Exceptions.UnauthorizedException;
 import client.ServerFacade;
 import model.AuthData;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class PreLoginUI {
@@ -18,6 +18,27 @@ public class PreLoginUI {
     public PreLoginUI(ServerFacade facade, Scanner scanner) {
         this.facade = facade;
         this.scanner = scanner;
+    }
+
+    public void run() throws IOException, InterruptedException {
+        boolean running = true;
+        String commands = "Commands:\n" +
+                "- help\n" +
+                "- login\n" +
+                "- register\n" +
+                "- quit\n";
+        System.out.println(commands);
+        while (running) {
+            System.out.print(">>> ");
+            String input = scanner.nextLine();
+            switch (input.toLowerCase(Locale.ROOT)) {
+                case "help" -> System.out.println(commands);
+                case "login" -> login();
+                case "register" -> register();
+                case "quit" -> running = false;
+                default -> System.out.print("Invalid command\n");
+            }
+        }
     }
 
     public void register() throws IOException, InterruptedException {
@@ -62,5 +83,7 @@ public class PreLoginUI {
                 System.out.println("Problem occurred with logging in try again");
             }
         }
+        PostLoginUI postLoginUI = new PostLoginUI(this.facade, this.scanner, this.authData);
+        postLoginUI.run();
     }
 }
