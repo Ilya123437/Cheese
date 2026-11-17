@@ -98,7 +98,7 @@ public class BoardPrinter {
         }
         System.out.print(BORDER_BACKGROUND + BORDER_TEXT + "   ");
         for (String letter : letters) {
-            System.out.print("  " + letter + " ");
+            System.out.print(" " + letter + EMPTY);
         }
         System.out.println("   " + ORIGINAL);
     }
