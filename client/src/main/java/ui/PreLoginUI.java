@@ -7,6 +7,7 @@ import model.AuthData;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class PreLoginUI {
@@ -43,10 +44,17 @@ public class PreLoginUI {
 
     public void register() throws IOException, InterruptedException {
         boolean registered = false;
+        boolean back = false;
 
         while (!registered) {
+            System.out.println("If you want to go back type 'back' for username");
             System.out.print("Username: ");
             String username = scanner.nextLine();
+
+            if (Objects.equals(username.trim().toLowerCase(Locale.ROOT), "back")) {
+                back = true;
+                break;
+            }
 
             System.out.print("Password: ");
             String password = scanner.nextLine();
@@ -62,14 +70,25 @@ public class PreLoginUI {
                 System.out.println("A problem occurred with the server try again");
             }
         }
+        if (!back) {
+            PostLoginUI postLoginUI = new PostLoginUI(this.facade, this.scanner, this.authData);
+            postLoginUI.run();
+        }
     }
 
     public void login() throws IOException, InterruptedException {
         boolean loggedIn = false;
+        boolean back = false;
 
         while (!loggedIn) {
+            System.out.println("If you want to go back type 'back' for username");
             System.out.print("Username: ");
             String username = scanner.nextLine();
+
+            if (Objects.equals(username, "back")) {
+                back = true;
+                break;
+            }
 
             System.out.print("Password: ");
             String password = scanner.nextLine();
@@ -83,7 +102,9 @@ public class PreLoginUI {
                 System.out.println("Problem occurred with logging in try again");
             }
         }
-        PostLoginUI postLoginUI = new PostLoginUI(this.facade, this.scanner, this.authData);
-        postLoginUI.run();
+        if (!back) {
+            PostLoginUI postLoginUI = new PostLoginUI(this.facade, this.scanner, this.authData);
+            postLoginUI.run();
+        }
     }
 }
