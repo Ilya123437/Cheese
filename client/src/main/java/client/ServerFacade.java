@@ -8,8 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.AuthData;
 import model.GameData;
-import server.Server;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -25,9 +23,8 @@ public class ServerFacade {
     private final Gson gson;
     private final int port;
 
-    public ServerFacade () {
-        Server server = new Server();
-        this.port = server.run(0);
+    public ServerFacade (int port) {
+        this.port = port;
         this.httpClient = HttpClient.newHttpClient();
         this.serverUrl = "http://localhost:" + port;
         this.gson = new GsonBuilder()

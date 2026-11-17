@@ -18,9 +18,7 @@ public class PreLoginUI {
 
     public PreLoginUI() {
         this.scanner = new Scanner(System.in);
-        this.facade = new ServerFacade();
-
-
+        this.facade = new ServerFacade(8080);
     }
 
     public void run() throws IOException, InterruptedException {
