@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.AuthData;
 import model.GameData;
+import server.Server;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,13 +23,20 @@ public class ServerFacade {
     private final HttpClient httpClient;
     private final String serverUrl;
     private final Gson gson;
+    private final int port;
 
-    public ServerFacade (Integer port) {
+    public ServerFacade () {
+        Server server = new Server();
+        this.port = server.run(0);
         this.httpClient = HttpClient.newHttpClient();
         this.serverUrl = "http://localhost:" + port;
         this.gson = new GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .create();
+    }
+
+    public int getPort() {
+        return this.port;
     }
 
     public AuthData register(String username, String password, String email) throws DataAccessException, IOException, InterruptedException, AlreadyTakenException {

@@ -27,7 +27,7 @@ public class ServerFacadeTests {
     public static void init() {
         server = new Server();
         var port = server.run(0);
-        facade = new ServerFacade(port);
+        facade = new ServerFacade();
         System.out.println("Started test HTTP server on " + port);
     }
 

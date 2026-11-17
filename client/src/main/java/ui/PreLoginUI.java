@@ -19,6 +19,7 @@ public class PreLoginUI {
     public PreLoginUI(ServerFacade facade, Scanner scanner) {
         this.facade = facade;
         this.scanner = scanner;
+
     }
 
     public void run() throws IOException, InterruptedException {
