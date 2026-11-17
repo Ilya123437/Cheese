@@ -49,7 +49,7 @@ public class PostLoginUI {
                     case "logout" -> {
                         logout();
                         loggedOut = true;
-                        PreLoginUI preLoginUI = new PreLoginUI(this.facade, this.scanner);
+                        PreLoginUI preLoginUI = new PreLoginUI();
                         preLoginUI.run();
                     }
                     default -> print("Invalid command");

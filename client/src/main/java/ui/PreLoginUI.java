@@ -16,9 +16,10 @@ public class PreLoginUI {
     private final Scanner scanner;
     private AuthData authData;
 
-    public PreLoginUI(ServerFacade facade, Scanner scanner) {
-        this.facade = facade;
-        this.scanner = scanner;
+    public PreLoginUI() {
+        this.scanner = new Scanner(System.in);
+        this.facade = new ServerFacade();
+
 
     }
 
