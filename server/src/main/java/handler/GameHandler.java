@@ -3,14 +3,12 @@ package handler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
-import service.Exceptions.AlreadyTakenException;
-import service.Exceptions.BadRequestException;
-import service.Exceptions.UnauthorizedException;
+import service.exceptions.AlreadyTakenException;
+import service.exceptions.BadRequestException;
+import service.exceptions.UnauthorizedException;
 import service.GameService;
 import io.javalin.http.Context;
-import service.Records.*;
-
-import java.util.Map;
+import service.records.*;
 
 public class GameHandler {
     private final GameService gameService;

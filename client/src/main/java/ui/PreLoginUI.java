@@ -1,7 +1,7 @@
 package ui;
 
-import client.Exceptions.AlreadyTakenException;
-import client.Exceptions.InvalidCredentialsException;
+import client.exceptions.AlreadyTakenException;
+import client.exceptions.InvalidCredentialsException;
 import client.ServerFacade;
 import model.AuthData;
 

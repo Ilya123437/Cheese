@@ -3,15 +3,12 @@ package handler;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import service.Exceptions.BadRequestException;
-import service.Exceptions.InvalidCredentialsException;
-import service.Exceptions.UnauthorizedException;
-import service.Records.LoginRequest;
-import service.Records.LoginResult;
-import service.Records.RegisterRequest;
+import service.exceptions.BadRequestException;
+import service.exceptions.InvalidCredentialsException;
+import service.exceptions.UnauthorizedException;
+import service.records.LoginRequest;
+import service.records.LoginResult;
 import service.UserService;
-
-import java.util.Map;
 
 public class SessionHandler {
     private final UserService userService;

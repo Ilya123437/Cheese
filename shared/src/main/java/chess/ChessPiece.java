@@ -98,120 +98,7 @@ public class ChessPiece {
 
         // Detecting pawns, this is the fun part lol
         } else if (this.piece == PieceType.PAWN) {
-
-            // Check the color
-            if (this.color == ChessGame.TeamColor.WHITE) {
-                // Check the diagonals
-                ChessPosition diagonalLeft = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
-                ChessPosition diagonalRight = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
-                ChessPosition straightAhead = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
-                ChessPosition straightAhead2 = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn());
-
-                if (board.getPiece(diagonalLeft) != null) {
-                    if (board.getPiece(diagonalLeft).getTeamColor() == ChessGame.TeamColor.BLACK) {
-                        // Check for Promotion
-                        if (myPosition.getRow() == 7) {
-                            addPromotionMoves(myPosition, diagonalLeft, possibleMoves);
-                        } else {
-                            ChessMove newMove = new ChessMove(myPosition, diagonalLeft, null);
-                            possibleMoves.add(newMove);
-                        }
-                    }
-                }
-                if (board.getPiece(diagonalRight) != null) {
-                    if (board.getPiece(diagonalRight).getTeamColor() == ChessGame.TeamColor.BLACK) {
-                        // Check for Promotion
-                        if (myPosition.getRow() == 7) {
-                            addPromotionMoves(myPosition, diagonalRight, possibleMoves);
-                        } else {
-                            ChessMove newMove = new ChessMove(myPosition, diagonalRight, null);
-                            possibleMoves.add(newMove);
-                        }
-                    }
-                }
-
-                // Check out of bounds
-                if (myPosition.getRow() != 8) {
-
-                    // Check straight ahead
-                    if (board.getPiece(straightAhead) == null) {
-
-                        // Check for Promotion
-                        if (myPosition.getRow() == 7) {
-                            addPromotionMoves(myPosition, straightAhead, possibleMoves);
-                        } else {
-                            ChessMove newMove = new ChessMove(myPosition, straightAhead, null);
-                            possibleMoves.add(newMove);
-                        }
-
-                        // Checking starting position
-                        if (myPosition.getRow() == 2) {
-
-                            // Check straight ahead 2 spaces
-                            if (board.getPiece(straightAhead2) == null) {
-                                ChessMove newMove2 = new ChessMove(myPosition, straightAhead2, null);
-                                possibleMoves.add(newMove2);
-                            }
-                        }
-                    }
-                }
-                //Black Pawn moves----------------------------------------------------------------
-            } else {
-                // Check the diagonals
-                ChessPosition diagonalLeft = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
-                ChessPosition diagonalRight = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
-                ChessPosition straightAhead = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
-                ChessPosition straightAhead2 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn());
-
-                if (board.getPiece(diagonalLeft) != null) {
-                    if (board.getPiece(diagonalLeft).getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        // Check for Promotion
-                        if (myPosition.getRow() == 2) {
-                            addPromotionMoves(myPosition, diagonalLeft, possibleMoves);
-                        } else {
-                            ChessMove newMove = new ChessMove(myPosition, diagonalLeft, null);
-                            possibleMoves.add(newMove);
-                        }
-                    }
-                }
-                if (board.getPiece(diagonalRight) != null) {
-                    if (board.getPiece(diagonalRight).getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        // Check for Promotion
-                        if (myPosition.getRow() == 2) {
-                            addPromotionMoves(myPosition, diagonalRight, possibleMoves);
-                        } else {
-                            ChessMove newMove = new ChessMove(myPosition, diagonalRight, null);
-                            possibleMoves.add(newMove);
-                        }
-                    }
-                }
-
-                // Check out of bounds
-                if (myPosition.getRow() != 1) {
-
-                    // Check straight ahead
-                    if (board.getPiece(straightAhead) == null) {
-                        // Check for Promotion
-                        if (myPosition.getRow() == 2) {
-                            addPromotionMoves(myPosition, straightAhead, possibleMoves);
-                        } else {
-                            ChessMove newMove = new ChessMove(myPosition, straightAhead, null);
-                            possibleMoves.add(newMove);
-                        }
-
-                        // Checking starting position
-                        if (myPosition.getRow() == 7) {
-
-                            // Check straight ahead 2 spaces
-                            if (board.getPiece(straightAhead2) == null) {
-                                ChessMove newMove2 = new ChessMove(myPosition, straightAhead2, null);
-                                possibleMoves.add(newMove2);
-                            }
-                        }
-                    }
-                }
-            }
-            return possibleMoves;
+            return getPawnMoves(board, myPosition);
         }
 
         int currentRowMut = myPosition.getRow();
@@ -276,5 +163,101 @@ public class ChessPiece {
             }
         }
         return possibleMoves;
+    }
+
+    private Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        if (this.color == ChessGame.TeamColor.WHITE) {
+            getWhitePawnMoves(board, myPosition, possibleMoves);
+        } else {
+            getBlackPawnMoves(board, myPosition, possibleMoves);
+        }
+        return possibleMoves;
+    }
+
+    private void getWhitePawnMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        // Check the diagonals
+        ChessPosition diagonalLeft = new ChessPosition(row + 1, col - 1);
+        ChessPosition diagonalRight = new ChessPosition(row + 1, col + 1);
+
+        // Check if there is a black piece on the left diagonal
+        if (col > 1 && board.getPiece(diagonalLeft) != null) {
+            if (board.getPiece(diagonalLeft).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                addPawnMove(myPosition, diagonalLeft, possibleMoves);
+            }
+        }
+        // Check if there is a black piece on the right diagonal
+        if (col < 8 && board.getPiece(diagonalRight) != null) {
+            if (board.getPiece(diagonalRight).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                addPawnMove(myPosition, diagonalRight, possibleMoves);
+            }
+        }
+        // Check out of bounds
+        if (row < 8) {
+            ChessPosition straightAhead = new ChessPosition(row + 1, col);
+            ChessPosition straightAhead2 = new ChessPosition(row + 2, col);
+            // Check straight ahead
+            if (board.getPiece(straightAhead) == null) {
+                addPawnMove(myPosition, straightAhead, possibleMoves);
+                // Checking starting position
+                if (row == 2) {
+                    // Check straight ahead 2 spaces
+                    if (board.getPiece(straightAhead2) == null) {
+                        addPawnMove(myPosition, straightAhead2, possibleMoves);
+                    }
+                }
+            }
+        }
+    }
+
+    private void getBlackPawnMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        // Check the diagonals
+        ChessPosition diagonalLeft = new ChessPosition(row - 1, col + 1);
+        ChessPosition diagonalRight = new ChessPosition(row - 1, col - 1);
+
+        // Check if there is a white piece on the left diagonal
+        if (col < 8 && board.getPiece(diagonalLeft) != null) {
+            if (board.getPiece(diagonalLeft).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                addPawnMove(myPosition, diagonalLeft, possibleMoves);
+            }
+        }
+        // Check if there is a white piece on the right diagonal
+        if (col > 1 && board.getPiece(diagonalRight) != null) {
+            if (board.getPiece(diagonalRight).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                addPawnMove(myPosition, diagonalRight, possibleMoves);
+            }
+        }
+        // Check out of bounds
+        if (row > 1) {
+            ChessPosition straightAhead = new ChessPosition(row - 1, col);
+            ChessPosition straightAhead2 = new ChessPosition(row - 2, col);
+
+            // Check straight ahead
+            if (board.getPiece(straightAhead) == null) {
+                addPawnMove(myPosition, straightAhead, possibleMoves);
+
+                // Checking starting position
+                if (row == 7) {
+                    // Check straight ahead 2 spaces
+                    if (board.getPiece(straightAhead2) == null) {
+                        addPawnMove(myPosition, straightAhead2, possibleMoves);
+                    }
+                }
+            }
+        }
+    }
+
+    private void addPawnMove(ChessPosition start, ChessPosition end, Collection<ChessMove> possibleMoves) {
+        if (end.getRow() == 8 || end.getRow() == 1) {
+            addPromotionMoves(start, end, possibleMoves);
+        } else {
+            possibleMoves.add(new ChessMove(start, end, null));
+        }
     }
 }

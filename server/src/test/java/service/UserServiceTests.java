@@ -2,13 +2,11 @@ package service;
 
 import dataaccess.sql.MySqlAuthDAO;
 import dataaccess.sql.MySqlUserDAO;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import dataaccess.User.MemoryUserDAO;
-import dataaccess.Auth.MemoryAuthDAO;
-import service.Records.RegisterRequest;
-import service.Records.RegisterResult;
+
+import service.records.RegisterRequest;
+import service.records.RegisterResult;
 
 public class UserServiceTests {
     private final UserService service = new UserService(new MySqlUserDAO(), new MySqlAuthDAO());

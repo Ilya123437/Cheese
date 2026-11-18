@@ -1,6 +1,5 @@
 package dataaccess;
 
-import dataaccess.User.UserDAO;
 import dataaccess.sql.MySqlUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.BeforeAll;

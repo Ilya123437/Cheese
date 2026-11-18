@@ -1,19 +1,19 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.User.UserDAO;
-import dataaccess.Auth.AuthDAO;
+import dataaccess.user.UserDAO;
+import dataaccess.auth.AuthDAO;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import service.Exceptions.AlreadyTakenException;
-import service.Exceptions.BadRequestException;
-import service.Exceptions.InvalidCredentialsException;
-import service.Exceptions.UnauthorizedException;
-import service.Records.LoginRequest;
-import service.Records.LoginResult;
-import service.Records.RegisterRequest;
-import service.Records.RegisterResult;
+import service.exceptions.AlreadyTakenException;
+import service.exceptions.BadRequestException;
+import service.exceptions.InvalidCredentialsException;
+import service.exceptions.UnauthorizedException;
+import service.records.LoginRequest;
+import service.records.LoginResult;
+import service.records.RegisterRequest;
+import service.records.RegisterResult;
 import service.util.RequestValidator;
 
 import java.util.UUID;

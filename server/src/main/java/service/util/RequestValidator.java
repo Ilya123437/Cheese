@@ -1,6 +1,6 @@
 package service.util;
 
-import service.Exceptions.BadRequestException;
+import service.exceptions.BadRequestException;
 
 public class RequestValidator {
 

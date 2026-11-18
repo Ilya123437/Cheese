@@ -1,13 +1,10 @@
 package server;
 
-import dataaccess.Auth.AuthDAO;
-import dataaccess.Auth.MemoryAuthDAO;
+import dataaccess.auth.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
-import dataaccess.Game.GameDAO;
-import dataaccess.Game.MemoryGameDAO;
-import dataaccess.User.MemoryUserDAO;
-import dataaccess.User.UserDAO;
+import dataaccess.game.GameDAO;
+import dataaccess.user.UserDAO;
 import dataaccess.sql.MySqlAuthDAO;
 import dataaccess.sql.MySqlGameDAO;
 import dataaccess.sql.MySqlUserDAO;

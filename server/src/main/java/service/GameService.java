@@ -1,18 +1,18 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.Auth.AuthDAO;
+import dataaccess.auth.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.Game.GameDAO;
+import dataaccess.game.GameDAO;
 import model.AuthData;
 import model.GameData;
-import service.Exceptions.AlreadyTakenException;
-import service.Exceptions.BadRequestException;
-import service.Exceptions.UnauthorizedException;
-import service.Records.CreateGameResult;
-import service.Records.CreateGameRequest;
-import service.Records.JoinGameRequest;
-import service.Records.ListGamesResult;
+import service.exceptions.AlreadyTakenException;
+import service.exceptions.BadRequestException;
+import service.exceptions.UnauthorizedException;
+import service.records.CreateGameResult;
+import service.records.CreateGameRequest;
+import service.records.JoinGameRequest;
+import service.records.ListGamesResult;
 import java.util.Objects;
 import java.util.Random;
 import service.util.RequestValidator;

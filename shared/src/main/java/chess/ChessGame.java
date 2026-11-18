@@ -59,8 +59,6 @@ public class ChessGame {
         ChessPiece pieceAtStart = board.getPiece(move.getStartPosition());
         ChessPiece pieceAtEnd = board.getPiece(move.getEndPosition());
 
-        // if (pieceAtStart.getTeamColor() == pieceAtEnd.getTeamColor()) {return false;}
-
         // Make the move
         board.removePiece(move.getEndPosition());
         board.removePiece(move.getStartPosition());
@@ -77,9 +75,6 @@ public class ChessGame {
         } else {
             board.removePiece(move.getEndPosition());
         }
-
-
-
         return isValid;
     }
 

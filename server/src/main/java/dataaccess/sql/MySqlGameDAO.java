@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
-import dataaccess.Game.GameDAO;
+import dataaccess.game.GameDAO;
 import model.GameData;
 import java.sql.SQLException;
 import java.util.ArrayList;

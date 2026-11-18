@@ -2,13 +2,12 @@ package handler;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import service.Exceptions.AlreadyTakenException;
-import service.Exceptions.BadRequestException;
-import service.Records.RegisterRequest;
+import service.exceptions.AlreadyTakenException;
+import service.exceptions.BadRequestException;
+import service.records.RegisterRequest;
 import io.javalin.http.Context;
-import service.Records.RegisterResult;
+import service.records.RegisterResult;
 import service.UserService;
-import java.util.Map;
 
 
 public class UserHandler {
