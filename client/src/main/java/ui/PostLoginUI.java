@@ -83,7 +83,7 @@ public class PostLoginUI {
 
         int i = 1;
         for (GameData game : games) {
-            print(i + "Game: " + game.gameName() + "\n");
+            print("\n" + i + ") Game: " + game.gameName() + "\n");
             i++;
             if (game.whiteUsername() != null) {
                 print("     White: " + game.whiteUsername());
@@ -93,7 +93,7 @@ public class PostLoginUI {
             if (game.blackUsername() != null) {
                 print("     Black: " + game.blackUsername());
             } else {
-                print("     Black: Available");
+                print("     Black: Available\n");
             }
 
         }
